@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classification App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex; /* 使用 Flex 布局 */
+            justify-content: space-between; /* 左右对齐 */
+        }
+
+        #left-section {
+            flex: 1; /* 占据左侧空间 */
+            margin-right: 20px; /* 右侧留出一些空隙 */
+        }
+
+        #right-section {
+            flex: 1; /* 占据右侧空间 */
+            margin-top: 100px; /* 右侧留出一些空隙 */
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        p {
+            color: #555;
+        }
+
+        .label-name {
+            font-weight: bold;
+            color: #4285f4;
+        }
+
+        #outputs {
+            margin-top: 20px;
+            white-space: pre-line; /* 保留换行符 */
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="left-section">
+        <h1>Image Classification App</h1>
+        <form id="predict-form" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" onchange="previewImage(this)">
+            <button type="button" onclick="predict()">Predict</button>
+        </form>
+        <h2>Selected Image:</h2>
+        <img id="preview" alt="Selected Image" style="max-width: 50%; display: none;">
+    </div>
+    <div id="right-section">
+        <h2>Prediction:</h2>
+        <pre id="outputs"></pre>
+    </div>
+    <script>
+        function previewImage(input) {
+            var preview = document.getElementById('preview');
+            var file = input.files[0];
+    
+            if (file) {
+                var reader = new FileReader();
+    
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+    
+                reader.readAsDataURL(file);
+            }
+        }
+        function predict() {
+            var formData = new FormData(document.getElementById('predict-form'));
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 处理返回的数据
+                console.log(data);
+                
+                // 在页面上显示数据
+                document.getElementById('outputs').innerText = JSON.stringify(data, null, 2);
+                //outputsElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    </script>
+</body>
+</html>
