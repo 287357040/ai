@@ -101,6 +101,7 @@ if __name__ == "__main__":
         learning_rate=float(args.learning_rate),
         load_best_model_at_end=True,
         metric_for_best_model=metric_name,
+        save_total_limit=3,
     )
     
     
